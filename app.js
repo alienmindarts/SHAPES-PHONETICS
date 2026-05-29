@@ -16,6 +16,11 @@ for (let i = 1; i <= 9; i++) {
     colorPickers[i] = document.getElementById(`color${i}`);
 }
 
+// Alternating color controls
+const toggleAlternarCores = document.getElementById('toggleAlternarCores');
+const sliderNumCores = document.getElementById('sliderNumCores');
+const valNumCores = document.getElementById('valNumCores');
+
 let framePendente = false;
 
 function atualizar() {
@@ -23,8 +28,11 @@ function atualizar() {
     const numeros = inputNumeros.value.split('').map(Number).filter(n => !isNaN(n) && n > 0 && n <= 9);
     const seed = parseInt(inputSeed.value) || 0;
     const maxHeight = parseInt(sliderAltura.value);
+    const usarPaternAlternado = toggleAlternarCores.checked;
+    const numCoresPatern = parseInt(sliderNumCores.value);
     
     valAltura.textContent = maxHeight;
+    valNumCores.textContent = numCoresPatern;
 
     // Get current colors from pickers
     const coresPersonalizadas = {};
@@ -35,9 +43,17 @@ function atualizar() {
     const prng = new SeededRandom(seed);
     motor.limpar();
 
-    numeros.forEach((numero) => {
-        // O último parâmetro (numero) é usado como índice para a Cor no renderizador
-        motor.colocarNumero(numero, maxHeight, prng, numero); 
+    numeros.forEach((numero, indice) => {
+        let idCor;
+        if (usarPaternAlternado) {
+            // Use position-based coloring with alternating pattern
+            idCor = (indice % numCoresPatern) + 1; // Colors 1 through numCoresPatern
+        } else {
+            // Use original digit-based coloring
+            idCor = numero;
+        }
+        // O último parâmetro (idCor) é usado como índice para a Cor no renderizador
+        motor.colocarNumero(numero, maxHeight, prng, idCor); 
     });
 
     // Pass custom colors to renderer
@@ -47,7 +63,7 @@ function atualizar() {
 }
 
 // Escuta as alterações nos controlos
-const inputs = [inputNumeros, inputSeed, sliderAltura, ...Object.values(colorPickers)];
+const inputs = [inputNumeros, inputSeed, sliderAltura, sliderNumCores, toggleAlternarCores, ...Object.values(colorPickers)];
 inputs.forEach(el => {
     el.addEventListener('input', () => {
         if (!framePendente) {

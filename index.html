@@ -64,11 +64,25 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="canvas-container">
-        <canvas id="canvas"></canvas>
-    </div>
+        <div class="control-group">
+            <label>Padrão Alternado de Cores:</label>
+            <div class="toggle-slider-group">
+                <label class="toggle-label">
+                    <input type="checkbox" id="toggleAlternarCores">
+                    Ativar padrão alternado
+                </label>
+                <div class="slider-group">
+                    <label>Número de cores no padrão: <span id="valNumCores">2</span></label>
+                    <input type="range" id="sliderNumCores" min="2" max="9" value="2">
+                </div>
+            </div>
+        </div>
+</div>
+
+<div class="canvas-container">
+    <canvas id="canvas"></canvas>
+</div>
 
     <script type="module" src="app.js"></script>
 </body>
