@@ -3,11 +3,13 @@ import { Dicionario } from './Dicionario.js';
 export class MotorEncaixe {
     constructor() {
         this.grelha = new Map(); // Guarda "x,y" e o ID da cor
+        this.grelhaVogais = new Map(); // Guarda "x,y" e a vogal
         this.xMaxGlobal = -1;
     }
 
     limpar() {
         this.grelha.clear();
+        this.grelhaVogais.clear();
         this.xMaxGlobal = -1;
     }
 
@@ -34,21 +36,21 @@ export class MotorEncaixe {
         return false;
     }
 
-    colocarNumero(numero, maxHeight, prng, idCor) {
+colocarNumero(numero, maxHeight, prng, idCor, vogal) {
         const variantes = Dicionario[numero];
         if (!variantes) return false;
-
+        
         const solucoesValidas = [];
         
         // Permite recuar até 8 casas para preencher buracos (se for um 9)
         const offsetMinimo = this.xMaxGlobal === -1 ? 0 : Math.max(0, this.xMaxGlobal - numero); 
-
+        
         for (const variante of variantes) {
             const dim = this.calcularDimensoes(variante);
             
             // Regra do Slider: Rejeita se quebrar a altura máxima
             if (dim.altura > maxHeight) continue;
-
+            
             // Tenta encaixar no espaço
             for (let x = offsetMinimo; x <= this.xMaxGlobal + 1; x++) {
                 for (let y = 0; y <= maxHeight - dim.altura; y++) {
@@ -70,9 +72,20 @@ export class MotorEncaixe {
         // Passa a seed pelas soluções possíveis e escolhe uma
         const escolhida = prng.pick(solucoesValidas);
 
+        // Determina o bloco alvo (mais à esquerda, ordenado por x depois y)
+        const coordsOrdenadas = [...escolhida.coords].sort((a, b) => {
+            return a[0] - b[0] || a[1] - b[1];
+        });
+        
         escolhida.coords.forEach(([x, y]) => {
             this.grelha.set(`${x},${y}`, idCor);
         });
+        
+        // Armazena vogal no bloco alvo
+        if (vogal) {
+            const [xAlvo, yAlvo] = coordsOrdenadas[0];
+            this.grelhaVogais.set(`${xAlvo},${yAlvo}`, vogal);
+        }
 
         this.xMaxGlobal = escolhida.xMaxAtual;
         return true;

@@ -52,14 +52,19 @@ function atualizar() {
             // Use original digit-based coloring
             idCor = numero;
         }
+        
+        // Vogal opcional: escolhe aleatoriamente ou baseado no índice
+        const vogaisPossiveis = ['A', 'E', 'I', 'O'];
+        const vogal = prng.pick(vogaisPossiveis);
+        
         // O último parâmetro (idCor) é usado como índice para a Cor no renderizador
-        motor.colocarNumero(numero, maxHeight, prng, idCor); 
+        motor.colocarNumero(numero, maxHeight, prng, idCor, vogal); 
     });
 
     // Pass custom colors to renderer
     renderizador.definirCoresPersonalizadas(coresPersonalizadas);
     renderizador.redimensionar(motor.xMaxGlobal + 1, maxHeight);
-    renderizador.desenhar(motor.grelha, maxHeight);
+    renderizador.desenhar(motor.grelha, motor.grelhaVogais, maxHeight);
 }
 
 // Escuta as alterações nos controlos

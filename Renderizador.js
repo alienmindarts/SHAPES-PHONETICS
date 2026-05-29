@@ -41,7 +41,7 @@ export class Renderizador {
         this.canvas.height = maxHeight * this.tamanhoCelula;
     }
 
-    desenhar(grelha, maxHeight) {
+    desenhar(grelha, grelhaVogais, maxHeight) {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         for (const [chave, idCor] of grelha.entries()) {
@@ -60,6 +60,47 @@ export class Renderizador {
             this.ctx.strokeStyle = 'rgba(0,0,0,0.2)';
             this.ctx.lineWidth = 2;
             this.ctx.strokeRect(coordX, coordY, this.tamanhoCelula, this.tamanhoCelula);
+            
+            // Desenha vogal se existir
+            const vogal = grelhaVogais.get(`${x},${y}`);
+            if (vogal) {
+                this.desenharVogal(this.ctx, x, yCorrigido, vogal);
+            }
         }
+    }
+    
+    desenharVogal(ctx, x, y, vogal) {
+        const cx = x * this.tamanhoCelula + (this.tamanhoCelula / 2);
+        const cy = y * this.tamanhoCelula + (this.tamanhoCelula / 2);
+        const t = this.tamanhoCelula;
+        
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.beginPath();
+        
+        switch (vogal) {
+            case 'A': // Baixo: Inferior Esquerdo, Inferior Direito, Centro
+                ctx.moveTo(x * t, (y + 1) * t);
+                ctx.lineTo((x + 1) * t, (y + 1) * t);
+                ctx.lineTo(cx, cy);
+                break;
+            case 'E': // Esquerda: Superior Esquerdo, Inferior Esquerdo, Centro
+                ctx.moveTo(x * t, y * t);
+                ctx.lineTo(x * t, (y + 1) * t);
+                ctx.lineTo(cx, cy);
+                break;
+            case 'I': // Cima: Superior Esquerdo, Superior Direito, Centro
+                ctx.moveTo(x * t, y * t);
+                ctx.lineTo((x + 1) * t, y * t);
+                ctx.lineTo(cx, cy);
+                break;
+            case 'O': // Direita: Superior Direito, Inferior Direito, Centro
+                ctx.moveTo((x + 1) * t, y * t);
+                ctx.lineTo((x + 1) * t, (y + 1) * t);
+                ctx.lineTo(cx, cy);
+                break;
+        }
+        
+        ctx.closePath();
+        ctx.fill();
     }
 }
