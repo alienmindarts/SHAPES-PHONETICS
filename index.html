@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfabeto Visual - Poliominós</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <div class="control-group">
+            <label>Sequência Numérica (1 a 9):</label>
+            <input type="text" id="inputNumeros" value="1234321">
+        </div>
+        
+        <div class="control-group">
+            <label>Seed (Estilo Visual):</label>
+            <input type="number" id="inputSeed" value="42">
+        </div>
+
+        <div class="control-group">
+            <label>Altura Máxima (Y): <span id="valAltura">4</span></label>
+            <input type="range" id="sliderAltura" min="1" max="9" value="4">
+        </div>
+
+        <div class="control-group">
+            <label>Cores dos Algarismos:</label>
+            <div class="color-pickers">
+                <div class="color-picker-item">
+                    <label for="color1">1:</label>
+                    <input type="color" id="color1" value="#FF3366">
+                </div>
+                <div class="color-picker-item">
+                    <label for="color2">2:</label>
+                    <input type="color" id="color2" value="#33CCFF">
+                </div>
+                <div class="color-picker-item">
+                    <label for="color3">3:</label>
+                    <input type="color" id="color3" value="#FF9933">
+                </div>
+                <div class="color-picker-item">
+                    <label for="color4">4:</label>
+                    <input type="color" id="color4" value="#33FF99">
+                </div>
+                <div class="color-picker-item">
+                    <label for="color5">5:</label>
+                    <input type="color" id="color5" value="#CC33FF">
+                </div>
+                <div class="color-picker-item">
+                    <label for="color6">6:</label>
+                    <input type="color" id="color6" value="#FFFF33">
+                </div>
+                <div class="color-picker-item">
+                    <label for="color7">7:</label>
+                    <input type="color" id="color7" value="#FF3333">
+                </div>
+                <div class="color-picker-item">
+                    <label for="color8">8:</label>
+                    <input type="color" id="color8" value="#3333FF">
+                </div>
+                <div class="color-picker-item">
+                    <label for="color9">9:</label>
+                    <input type="color" id="color9" value="#33FF33">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
