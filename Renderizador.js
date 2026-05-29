@@ -4,9 +4,9 @@ export class Renderizador {
         this.ctx = this.canvas.getContext('2d');
         this.tamanhoCelula = 25; // Tamanho de cada bloco (pixel lógico)
         
-        // Cores para distinguir as peças (1 a 9)
+        // Cores para distinguir as peças (0 a 9)
         this.coresPadrao = [
-            '#FF3366', '#33CCFF', '#FF9933', '#33FF99', 
+            '#FFFFFF', '#FF3366', '#33CCFF', '#FF9933', '#33FF99', 
             '#CC33FF', '#FFFF33', '#FF3333', '#3333FF', '#33FF33'
         ];
         
@@ -32,6 +32,9 @@ export class Renderizador {
         if (this.coresPersonalizadas[idCor]) {
             return this.coresPersonalizadas[idCor];
         }
+        if (idCor === 0) {
+            return this.coresPadrao[0];
+        }
         return this.coresPadrao[(idCor - 1) % this.coresPadrao.length];
     }
 
@@ -52,15 +55,28 @@ export class Renderizador {
 
             const coordX = x * this.tamanhoCelula;
             const coordY = yCorrigido * this.tamanhoCelula;
+            const s = this.tamanhoCelula;
 
             this.ctx.fillStyle = this.obterCor(idCor);
-            this.ctx.fillRect(coordX, coordY, this.tamanhoCelula, this.tamanhoCelula);
+            
+            if (idCor === 0) {
+                const px = coordX;
+                const py = coordY;
+                this.ctx.beginPath();
+                this.ctx.moveTo(px, py);
+                this.ctx.lineTo(px + s, py);
+                this.ctx.lineTo(px, py + s);
+                this.ctx.closePath();
+                this.ctx.fill();
+            } else {
+                this.ctx.fillRect(coordX, coordY, this.tamanhoCelula, this.tamanhoCelula);
+            }
             
             // Borda interna para legibilidade (opcional)
             this.ctx.strokeStyle = 'rgba(0,0,0,0.2)';
             this.ctx.lineWidth = 2;
             this.ctx.strokeRect(coordX, coordY, this.tamanhoCelula, this.tamanhoCelula);
-            
+
             // Desenha vogais se existirem
             const vogaisDados = grelhaVogais.get(`${x},${y}`);
             if (vogaisDados) {
