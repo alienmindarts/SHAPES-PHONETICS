@@ -61,46 +61,77 @@ export class Renderizador {
             this.ctx.lineWidth = 2;
             this.ctx.strokeRect(coordX, coordY, this.tamanhoCelula, this.tamanhoCelula);
             
-            // Desenha vogal se existir
-            const vogal = grelhaVogais.get(`${x},${y}`);
-            if (vogal) {
-                this.desenharVogal(this.ctx, x, yCorrigido, vogal);
+            // Desenha vogais se existirem
+            const vogaisDados = grelhaVogais.get(`${x},${y}`);
+            if (vogaisDados) {
+                this.desenharVogais(this.ctx, x, yCorrigido, vogaisDados, this.tamanhoCelula);
             }
         }
     }
     
-    desenharVogal(ctx, x, y, vogal) {
-        const cx = x * this.tamanhoCelula + (this.tamanhoCelula / 2);
-        const cy = y * this.tamanhoCelula + (this.tamanhoCelula / 2);
-        const t = this.tamanhoCelula;
+    /**
+     * Desenha as vogais associadas a um bloco como triângulos recortados
+     * @param {CanvasRenderingContext2D} ctx - Contexto do canvas
+     * @param {number} x - Coordenada X lógica do bloco (índice da coluna)
+     * @param {number} y - Coordenada Y lógica do bloco (índice da linha, já corrigida para o sistema de coordenadas do canvas)
+     * @param {Object} dadosVogais - Objeto contendo arrays de vogais anteriores e posteriores
+     * @param {number} tamanhoCelula - Tamanho de cada bloco em pixels
+     */
+    desenharVogais(ctx, x, y, dadosVogais, tamanhoCelula) {
+        const px = x * tamanhoCelula;
+        const py = y * tamanhoCelula;
+        const s = tamanhoCelula;
+        const centerX = px + s / 2;
+        const centerY = py + s / 2;
         
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-        ctx.beginPath();
+        // Obtém a cor de fundo do canvas
+        const bgColor = getComputedStyle(this.canvas).backgroundColor;
+        ctx.fillStyle = bgColor;
         
-        switch (vogal) {
-            case 'A': // Baixo: Inferior Esquerdo, Inferior Direito, Centro
-                ctx.moveTo(x * t, (y + 1) * t);
-                ctx.lineTo((x + 1) * t, (y + 1) * t);
-                ctx.lineTo(cx, cy);
-                break;
-            case 'E': // Esquerda: Superior Esquerdo, Inferior Esquerdo, Centro
-                ctx.moveTo(x * t, y * t);
-                ctx.lineTo(x * t, (y + 1) * t);
-                ctx.lineTo(cx, cy);
-                break;
-            case 'I': // Cima: Superior Esquerdo, Superior Direito, Centro
-                ctx.moveTo(x * t, y * t);
-                ctx.lineTo((x + 1) * t, y * t);
-                ctx.lineTo(cx, cy);
-                break;
-            case 'O': // Direita: Superior Direito, Inferior Direito, Centro
-                ctx.moveTo((x + 1) * t, y * t);
-                ctx.lineTo((x + 1) * t, (y + 1) * t);
-                ctx.lineTo(cx, cy);
-                break;
+        // Função auxiliar para desenhar um triângulo dado três pontos
+        const desenharTriangulo = (x1, y1, x2, y2, x3, y3) => {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.lineTo(x3, y3);
+            ctx.closePath();
+            ctx.fill();
+        };
+        
+        // Desenha vogais anteriores (apontam para o centro)
+        for (const vogal of dadosVogais.anteriores) {
+            switch (vogal) {
+                case 'A': // Baixo: (px, py+s), (px+s, py+s), centro
+                    desenharTriangulo(px, py + s, px + s, py + s, centerX, centerY);
+                    break;
+                case 'E': // Esquerda: (px, py), (px, py+s), centro
+                    desenharTriangulo(px, py, px, py + s, centerX, centerY);
+                    break;
+                case 'I': // Cima: (px, py), (px+s, py), centro
+                    desenharTriangulo(px, py, px + s, py, centerX, centerY);
+                    break;
+                case 'O': // Direita: (px+s, py), (px+s, py+s), centro
+                    desenharTriangulo(px + s, py, px + s, py + s, centerX, centerY);
+                    break;
+            }
         }
         
-        ctx.closePath();
-        ctx.fill();
+        // Desenha vogais posteriores (cantos)
+        for (const vogal of dadosVogais.posteriores) {
+            switch (vogal) {
+                case 'A': // Baixo -> Canto Inferior Direito: (px + s/2, py + s), (px + s, py + s/2), vértice (px + s, py + s)
+                    desenharTriangulo(px + s/2, py + s, px + s, py + s/2, px + s, py + s);
+                    break;
+                case 'E': // Esquerda -> Canto Superior Esquerdo: (px + s/2, py), (px, py + s/2), vértice (px, py)
+                    desenharTriangulo(px + s/2, py, px, py + s/2, px, py);
+                    break;
+                case 'I': // Cima -> Canto Superior Direito: (px + s/2, py), (px + s, py + s/2), vértice (px + s, py)
+                    desenharTriangulo(px + s/2, py, px + s, py + s/2, px + s, py);
+                    break;
+                case 'O': // Direita -> Canto Inferior Esquerdo: (px, py + s/2), (px + s/2, py + s), vértice (px, py + s)
+                    desenharTriangulo(px, py + s/2, px + s/2, py + s, px, py + s);
+                    break;
+            }
+        }
     }
 }

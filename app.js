@@ -1,6 +1,7 @@
 import { SeededRandom } from './PRNG.js';
 import { MotorEncaixe } from './MotorEncaixe.js';
 import { Renderizador } from './Renderizador.js';
+import { Fonetico } from './Fonetico.js';
 
 const motor = new MotorEncaixe();
 const renderizador = new Renderizador('canvas');
@@ -24,8 +25,8 @@ const valNumCores = document.getElementById('valNumCores');
 let framePendente = false;
 
 function atualizar() {
-    // Filtra apenas números válidos (1 a 9 neste exemplo)
-    const numeros = inputNumeros.value.split('').map(Number).filter(n => !isNaN(n) && n > 0 && n <= 9);
+    // Obtém o texto de entrada (pode conter letras e números)
+    const textoInput = inputNumeros.value;
     const seed = parseInt(inputSeed.value) || 0;
     const maxHeight = parseInt(sliderAltura.value);
     const usarPaternAlternado = toggleAlternarCores.checked;
@@ -33,37 +34,40 @@ function atualizar() {
     
     valAltura.textContent = maxHeight;
     valNumCores.textContent = numCoresPatern;
-
+    
     // Get current colors from pickers
     const coresPersonalizadas = {};
     for (let i = 1; i <= 9; i++) {
         coresPersonalizadas[i] = colorPickers[i].value;
     }
-
+    
     const prng = new SeededRandom(seed);
     motor.limpar();
-
-    numeros.forEach((numero, indice) => {
+    
+    // Analisa o texto de entrada para obter blocos de consoantes e vogais
+    const blocos = Fonetico.converterTexto(textoInput);
+    
+    blocos.forEach((bloco, indice) => {
         let idCor;
         if (usarPaternAlternado) {
             // Use position-based coloring with alternating pattern
             idCor = (indice % numCoresPatern) + 1; // Colors 1 through numCoresPatern
         } else {
-            // Use original digit-based coloring
-            idCor = numero;
+            // Use original digit-based coloring (consoante do bloco)
+            idCor = parseInt(bloco.consoante);
         }
         
-        // Vogal opcional: escolhe aleatoriamente ou baseado no índice
-        const vogaisPossiveis = ['A', 'E', 'I', 'O'];
-        const vogal = prng.pick(vogaisPossiveis);
+        // Converte a consoante (string) para número para usar como numero da peça
+        const numero = parseInt(bloco.consoante);
         
-        // O último parâmetro (idCor) é usado como índice para a Cor no renderizador
-        motor.colocarNumero(numero, maxHeight, prng, idCor, vogal); 
+        // Passa as vogais anteriores e posteriores para o motor
+        motor.colocarNumero(numero, maxHeight, prng, idCor, bloco.vogaisAnteriores, bloco.vogaisPosteriores);
     });
-
+    
     // Pass custom colors to renderer
     renderizador.definirCoresPersonalizadas(coresPersonalizadas);
     renderizador.redimensionar(motor.xMaxGlobal + 1, maxHeight);
+    // Note: Now we pass the grelhaVogais which contains vowel objects
     renderizador.desenhar(motor.grelha, motor.grelhaVogais, maxHeight);
 }
 

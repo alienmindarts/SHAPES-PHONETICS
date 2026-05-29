@@ -36,7 +36,7 @@ export class MotorEncaixe {
         return false;
     }
 
-colocarNumero(numero, maxHeight, prng, idCor, vogal) {
+colocarNumero(numero, maxHeight, prng, idCor, vogaisAnteriores, vogaisPosteriores) {
         const variantes = Dicionario[numero];
         if (!variantes) return false;
         
@@ -56,7 +56,7 @@ colocarNumero(numero, maxHeight, prng, idCor, vogal) {
                 for (let y = 0; y <= maxHeight - dim.altura; y++) {
                     const pecaTestada = this.moverPeca(variante, x, y);
                     const xMaxAtual = x + dim.xMax;
-
+    
                     // A Regra de Ouro: Xmax(B) >= Xmax(A) + 1
                     if (this.xMaxGlobal === -1 || xMaxAtual >= this.xMaxGlobal + 1) {
                         if (!this.temColisao(pecaTestada)) {
@@ -66,12 +66,12 @@ colocarNumero(numero, maxHeight, prng, idCor, vogal) {
                 }
             }
         }
-
+        
         if (solucoesValidas.length === 0) return false;
-
+        
         // Passa a seed pelas soluções possíveis e escolhe uma
         const escolhida = prng.pick(solucoesValidas);
-
+        
         // Determina o bloco alvo (mais à esquerda, ordenado por x depois y)
         const coordsOrdenadas = [...escolhida.coords].sort((a, b) => {
             return a[0] - b[0] || a[1] - b[1];
@@ -81,12 +81,13 @@ colocarNumero(numero, maxHeight, prng, idCor, vogal) {
             this.grelha.set(`${x},${y}`, idCor);
         });
         
-        // Armazena vogal no bloco alvo
-        if (vogal) {
-            const [xAlvo, yAlvo] = coordsOrdenadas[0];
-            this.grelhaVogais.set(`${xAlvo},${yAlvo}`, vogal);
-        }
-
+        // Armazena vogais no bloco alvo
+        const [xAlvo, yAlvo] = coordsOrdenadas[0];
+        this.grelhaVogais.set(`${xAlvo},${yAlvo}`, {
+            anteriores: vogaisAnteriores,
+            posteriores: vogaisPosteriores
+        });
+        
         this.xMaxGlobal = escolhida.xMaxAtual;
         return true;
     }
