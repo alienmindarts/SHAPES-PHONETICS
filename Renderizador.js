@@ -116,20 +116,21 @@ export class Renderizador {
             }
         }
         
-        // Desenha vogais posteriores (cantos)
+        // Desenha vogais posteriores (cantos) - com posições trocadas conforme solicitado
+        // A passa o lugar do E, E para o lugar do I, I para o lugar do O, O para o lugar do A
         for (const vogal of dadosVogais.posteriores) {
             switch (vogal) {
-                case 'A': // Baixo -> Canto Inferior Direito: (px + s/2, py + s), (px + s, py + s/2), vértice (px + s, py + s)
-                    desenharTriangulo(px + s/2, py + s, px + s, py + s/2, px + s, py + s);
-                    break;
-                case 'E': // Esquerda -> Canto Superior Esquerdo: (px + s/2, py), (px, py + s/2), vértice (px, py)
+                case 'A': // Agora desenha onde o E estava: Canto Superior Esquerdo
                     desenharTriangulo(px + s/2, py, px, py + s/2, px, py);
                     break;
-                case 'I': // Cima -> Canto Superior Direito: (px + s/2, py), (px + s, py + s/2), vértice (px + s, py)
+                case 'E': // Agora desenha onde o I estava: Canto Superior Direito
                     desenharTriangulo(px + s/2, py, px + s, py + s/2, px + s, py);
                     break;
-                case 'O': // Direita -> Canto Inferior Esquerdo: (px, py + s/2), (px + s/2, py + s), vértice (px, py + s)
+                case 'I': // Agora desenha onde o O estava: Canto Inferior Esquerdo
                     desenharTriangulo(px, py + s/2, px + s/2, py + s, px, py + s);
+                    break;
+                case 'O': // Agora desenha onde o A estava: Canto Inferior Direito
+                    desenharTriangulo(px + s/2, py + s, px + s, py + s/2, px + s, py + s);
                     break;
             }
         }
