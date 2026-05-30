@@ -13,7 +13,7 @@ const valAltura = document.getElementById('valAltura');
 
 // Color picker inputs
 const colorPickers = {};
-for (let i = 1; i <= 9; i++) {
+for (let i = 0; i <= 9; i++) {
     colorPickers[i] = document.getElementById(`color${i}`);
 }
 
@@ -37,7 +37,7 @@ function atualizar() {
     
     // Get current colors from pickers
     const coresPersonalizadas = {};
-    for (let i = 1; i <= 9; i++) {
+    for (let i = 0; i <= 9; i++) {
         coresPersonalizadas[i] = colorPickers[i].value;
     }
     

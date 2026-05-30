@@ -16,7 +16,7 @@ export class Renderizador {
     
     /**
      * Define as cores personalizadas para os algarismos
-     * @param {Object} cores - Objeto mapeando algarismos (1-9) para cores hexadecimais
+     * @param {Object} cores - Objeto mapeando algarismos (0-9) para cores hexadecimais
      */
     definirCoresPersonalizadas(cores) {
         this.coresPersonalizadas = cores;
