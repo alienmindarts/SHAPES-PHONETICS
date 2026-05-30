@@ -28,14 +28,10 @@ export class Renderizador {
      * @returns {string} Cor hexadecimal
      */
     obterCor(idCor) {
-        // Retorna a cor personalizada se existir, senão a cor padrão
         if (this.coresPersonalizadas[idCor]) {
             return this.coresPersonalizadas[idCor];
         }
-        if (idCor === 0) {
-            return this.coresPadrao[0];
-        }
-        return this.coresPadrao[(idCor - 1) % this.coresPadrao.length];
+        return this.coresPadrao[idCor % this.coresPadrao.length];
     }
 
     redimensionar(larguraMaxima, maxHeight) {
@@ -47,8 +43,10 @@ export class Renderizador {
     desenhar(grelha, grelhaVogais, maxHeight) {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        for (const [chave, idCor] of grelha.entries()) {
+        for (const [chave, info] of grelha.entries()) {
             const [x, y] = chave.split(',').map(Number);
+            const numero = info.numero;
+            const idCor = info.idCor;
             
             // Desenha com offset no Y para as peças ficarem assentes no fundo do canvas
             const yCorrigido = (maxHeight - 1) - y;
@@ -59,7 +57,7 @@ export class Renderizador {
 
             this.ctx.fillStyle = this.obterCor(idCor);
             
-            if (idCor === 0) {
+            if (numero === 0) {
                 const px = coordX;
                 const py = coordY;
                 this.ctx.beginPath();

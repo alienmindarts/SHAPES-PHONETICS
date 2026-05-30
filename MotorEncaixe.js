@@ -2,7 +2,7 @@ import { Dicionario } from './Dicionario.js';
 
 export class MotorEncaixe {
     constructor() {
-        this.grelha = new Map(); // Guarda "x,y" e o ID da cor
+        this.grelha = new Map(); // Guarda "x,y" -> { numero, idCor }
         this.grelhaVogais = new Map(); // Guarda "x,y" e a vogal
         this.xMaxGlobal = -1;
     }
@@ -78,7 +78,7 @@ colocarNumero(numero, maxHeight, prng, idCor, vogaisAnteriores, vogaisPosteriore
         });
         
         escolhida.coords.forEach(([x, y]) => {
-            this.grelha.set(`${x},${y}`, idCor);
+            this.grelha.set(`${x},${y}`, { numero, idCor });
         });
         
         // Armazena vogais no bloco alvo

@@ -51,7 +51,7 @@ function atualizar() {
         let idCor;
         if (usarPaternAlternado) {
             // Use position-based coloring with alternating pattern
-            idCor = (indice % numCoresPatern) + 1; // Colors 1 through numCoresPatern
+            idCor = indice % numCoresPatern; // Colors 0 through numCoresPatern-1
         } else {
             // Use original digit-based coloring (consoante do bloco)
             idCor = parseInt(bloco.consoante);
