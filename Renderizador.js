@@ -112,8 +112,11 @@ export class Renderizador {
             ctx.fill();
         };
         
-        // Desenha vogais anteriores (apontam para o centro)
-        for (const vogal of dadosVogais.anteriores) {
+        // Desenha vogais anteriores (apontam para o centro) com transparência conforme ordem
+        for (let i = 0; i < dadosVogais.anteriores.length; i++) {
+            const vogal = dadosVogais.anteriores[i];
+            const alpha = Math.max(0, 1 - i * 0.25);
+            ctx.globalAlpha = alpha;
             switch (vogal) {
                 case 'A': // Baixo: (px, py+s), (px+s, py+s), centro
                     desenharTriangulo(px, py + s, px + s, py + s, centerX, centerY);
@@ -130,9 +133,11 @@ export class Renderizador {
             }
         }
         
-        // Desenha vogais posteriores (cantos) - com posições trocadas conforme solicitado
-        // A passa o lugar do E, E para o lugar do I, I para o lugar do O, O para o lugar do A
-        for (const vogal of dadosVogais.posteriores) {
+        // Desenha vogais posteriores (cantos) - com posições trocadas conforme solicitado, com transparência conforme ordem
+        for (let i = 0; i < dadosVogais.posteriores.length; i++) {
+            const vogal = dadosVogais.posteriores[i];
+            const alpha = Math.max(0, 1 - i * 0.25);
+            ctx.globalAlpha = alpha;
             switch (vogal) {
                 case 'A': // Agora desenha onde o E estava: Canto Superior Esquerdo
                     desenharTriangulo(px + s/2, py, px, py + s/2, px, py);
@@ -148,5 +153,7 @@ export class Renderizador {
                     break;
             }
         }
+        
+        ctx.globalAlpha = 1.0; // reset alpha
     }
 }
