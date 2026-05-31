@@ -7,17 +7,24 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="dashboard">
-        <div class="control-group">
-            <label>Sequência Numérica (0 a 9):</label>
-            <input type="text" id="inputNumeros" value="1234321">
-        </div>
-        
-        <div class="control-group">
-            <label>Seed (Estilo Visual):</label>
-            <input type="number" id="inputSeed" value="42">
-        </div>
-
+     <div class="dashboard">
+         <div id="sequenciaGroup" class="control-group">
+             <label>Sequência Numérica (0 a 9):</label>
+             <input type="text" id="inputNumeros" value="1234321">
+         </div>
+         
+         <div class="control-group">
+             <label class="toggle-label">
+                 <input type="checkbox" id="toggleMostrarSequencia" checked>
+                 Mostrar sequência numérica
+             </label>
+         </div>
+         
+         <div class="control-group">
+             <label>Seed (Estilo Visual):</label>
+             <input type="number" id="inputSeed" value="42">
+         </div>
+ 
         <div class="control-group">
             <label>Altura Máxima (Y): <span id="valAltura">4</span></label>
             <input type="range" id="sliderAltura" min="1" max="9" value="4">

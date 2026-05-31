@@ -22,6 +22,11 @@ for (let i = 0; i <= 9; i++) {
 const toggleAlternarCores = document.getElementById('toggleAlternarCores');
 const sliderNumCores = document.getElementById('sliderNumCores');
 const valNumCores = document.getElementById('valNumCores');
+// Toggle for hiding numeric sequence
+const toggleMostrarSequencia = document.getElementById('toggleMostrarSequencia');
+const sequenciaGroup = document.getElementById('sequenciaGroup');
+// Set initial visibility
+sequenciaGroup.style.display = toggleMostrarSequencia.checked ? 'block' : 'none';
 
 let framePendente = false;
 
@@ -88,6 +93,13 @@ inputs.forEach(el => {
         }
     });
 });
+
+        
+// Toggle visibility of numeric sequence input
+toggleMostrarSequencia.addEventListener('change', () => {
+    sequenciaGroup.style.display = toggleMostrarSequencia.checked ? 'block' : 'none';
+});
+
 
 // Arranca na primeira vez
 atualizar();
