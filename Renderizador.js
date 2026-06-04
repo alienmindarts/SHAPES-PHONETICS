@@ -15,6 +15,143 @@ export class Renderizador {
     }
     
     /**
+     * Exporta o conteúdo do canvas como PNG
+     * @returns {string} URL de dados da imagem PNG
+     */
+    exportarPNG() {
+        return this.canvas.toDataURL('image/png');
+    }
+    
+    /**
+     * Exporta o conteúdo do canvas como JPEG
+     * @param {number} qualidade - Qualidade da imagem (0.1 a 1.0), padrão 0.92
+     * @returns {string} URL de dados da imagem JPEG
+     */
+    exportarJPEG(qualidade = 0.92) {
+        return this.canvas.toDataURL('image/jpeg', qualidade);
+    }
+    
+    /**
+     * Exporta o conteúdo como SVG
+     * @param {Map} grelha - Mapa de coordenadas para informações das peças
+     * @param {Map} grelhaVogais - Mapa de coordenadas para vogais
+     * @param {number} maxHeight - Altura máxima
+     * @returns {string} String SVG
+     */
+    exportarSVG(grelha, grelhaVogais, maxHeight) {
+        const largura = this.canvas.width;
+        const altura = this.canvas.height;
+        const tamanhoCelula = this.tamanhoCelula;
+        
+        const bgColor = getComputedStyle(this.canvas).backgroundColor || '#222222';
+        
+        let svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${largura}" height="${altura}" viewBox="0 0 ${largura} ${altura}">
+<rect width="${largura}" height="${altura}" fill="${bgColor}"/>`;
+        
+        for (const [chave, info] of grelha.entries()) {
+            const [x, y] = chave.split(',').map(Number);
+            const numero = info.numero;
+            const idCor = info.idCor;
+            
+            const yCorrigido = (maxHeight - 1) - y;
+            const coordX = x * tamanhoCelula;
+            const coordY = yCorrigido * tamanhoCelula;
+            const s = tamanhoCelula;
+            
+            const cor = this.obterCor(idCor);
+            
+            if (numero === 0) {
+                const x1 = coordX;
+                const y1 = coordY;
+                const x2 = coordX + s;
+                const y2 = coordY + s;
+                svg += `<polygon points="${x1},${y1} ${x2},${y1} ${x1},${y2}" fill="${cor}" stroke="rgba(0,0,0,0.2)" stroke-width="2"/>`;
+            } else {
+                svg += `<rect x="${coordX}" y="${coordY}" width="${s}" height="${s}" fill="${cor}" stroke="rgba(0,0,0,0.2)" stroke-width="2"/>`;
+            }
+            
+            const vogaisDados = grelhaVogais.get(chave);
+            if (vogaisDados) {
+                svg += this.desenharVogaisSVG(x, yCorrigido, vogaisDados, tamanhoCelula, bgColor);
+            }
+        }
+        
+        svg += '</svg>';
+        return svg;
+    }
+    
+    /**
+     * Desenha vogais como polígonos SVG
+     */
+    desenharVogaisSVG(x, y, dadosVogais, tamanhoCelula, bgColor) {
+        let svg = '';
+        const px = x * tamanhoCelula;
+        const py = y * tamanhoCelula;
+        const s = tamanhoCelula;
+        const centerX = px + s / 2;
+        const centerY = py + s / 2;
+        
+        for (let i = 0; i < dadosVogais.anteriores.length; i++) {
+            const vogal = dadosVogais.anteriores[i];
+            const alpha = Math.max(0, 1 - i * 0.25);
+            let pontos = '';
+            
+            switch (vogal) {
+                case 'A':
+                    pontos = `${px},${py + s} ${px + s},${py + s} ${centerX},${centerY}`;
+                    break;
+                case 'E':
+                    pontos = `${px},${py} ${px},${py + s} ${centerX},${centerY}`;
+                    break;
+                case 'I':
+                    pontos = `${px},${py} ${px + s},${py} ${centerX},${centerY}`;
+                    break;
+                case 'O':
+                    pontos = `${px + s},${py} ${px + s},${py + s} ${centerX},${centerY}`;
+                    break;
+            }
+            svg += `<polygon points="${pontos}" fill="${bgColor}" fill-opacity="${1 - alpha}" stroke="rgba(0,0,0,0.2)" stroke-width="2"/>`;
+        }
+        
+        for (let i = 0; i < dadosVogais.posteriores.length; i++) {
+            const vogal = dadosVogais.posteriores[i];
+            const alpha = Math.max(0, 1 - i * 0.25);
+            let pontos = '';
+            
+            switch (vogal) {
+                case 'A':
+                    pontos = `${px + s/2},${py} ${px},${py + s/2} ${px},${py}`;
+                    break;
+                case 'E':
+                    pontos = `${px + s/2},${py} ${px + s},${py + s/2} ${px + s},${py}`;
+                    break;
+                case 'I':
+                    pontos = `${px},${py + s/2} ${px + s/2},${py + s} ${px},${py + s}`;
+                    break;
+                case 'O':
+                    pontos = `${px + s/2},${py + s} ${px + s},${py + s/2} ${px + s},${py + s}`;
+                    break;
+            }
+            svg += `<polygon points="${pontos}" fill="${bgColor}" fill-opacity="${1 - alpha}" stroke="rgba(0,0,0,0.2)" stroke-width="2"/>`;
+        }
+        
+        return svg;
+    }
+    
+    /**
+     * Faz download de um arquivo com os dados fornecidos
+     */
+    fazerDownload(dados, nomeArquivo, tipoMime) {
+        const link = document.createElement('a');
+        link.download = nomeArquivo;
+        link.href = tipoMime === 'image/svg+xml' 
+            ? 'data:' + tipoMime + ';charset=utf-8,' + encodeURIComponent(dados)
+            : dados;
+        link.click();
+    }
+    
+    /**
      * Define as cores personalizadas para os algarismos
      * @param {Object} cores - Objeto mapeando algarismos (0-9) para cores hexadecimais
      */

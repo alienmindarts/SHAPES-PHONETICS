@@ -94,6 +94,24 @@ inputs.forEach(el => {
     });
 });
 
+// Botões de exportação
+document.getElementById('btnExportarPNG').addEventListener('click', () => {
+    const dadosPNG = renderizador.exportarPNG();
+    renderizador.fazerDownload(dadosPNG, 'poliominos.png', 'image/png');
+});
+
+document.getElementById('btnExportarJPEG').addEventListener('click', () => {
+    const dadosJPEG = renderizador.exportarJPEG(0.92);
+    renderizador.fazerDownload(dadosJPEG, 'poliominos.jpg', 'image/jpeg');
+});
+
+document.getElementById('btnExportarSVG').addEventListener('click', () => {
+    const textoInput = inputNumeros.value;
+    const maxHeight = parseInt(sliderAltura.value);
+    const svg = renderizador.exportarSVG(motor.grelha, motor.grelhaVogais, maxHeight);
+    renderizador.fazerDownload(svg, 'poliominos.svg', 'image/svg+xml');
+});
+
         
 // Toggle visibility of numeric sequence input
 toggleMostrarSequencia.addEventListener('change', () => {
