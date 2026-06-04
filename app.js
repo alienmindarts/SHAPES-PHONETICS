@@ -10,6 +10,8 @@ const inputNumeros = document.getElementById('inputNumeros');
 const inputSeed = document.getElementById('inputSeed');
 const sliderAltura = document.getElementById('sliderAltura');
 const valAltura = document.getElementById('valAltura');
+const sliderArredondamento = document.getElementById('sliderArredondamento');
+const valArredondamento = document.getElementById('valArredondamento');
 const canvasBackground = document.getElementById('canvasBackground');
 
 // Color picker inputs
@@ -35,14 +37,17 @@ function atualizar() {
     const textoInput = inputNumeros.value;
     const seed = parseInt(inputSeed.value) || 0;
     const maxHeight = parseInt(sliderAltura.value);
+    const arredondamento = parseInt(sliderArredondamento.value);
     const usarPaternAlternado = toggleAlternarCores.checked;
     const numCoresPatern = parseInt(sliderNumCores.value);
     
     valAltura.textContent = maxHeight;
     valNumCores.textContent = numCoresPatern;
+    valArredondamento.textContent = arredondamento;
     
     // Set canvas background color
     renderizador.canvas.style.backgroundColor = canvasBackground.value;
+    renderizador.setArredondamento(arredondamento);
     
     // Get current colors from pickers
     const coresPersonalizadas = {};
@@ -81,7 +86,7 @@ function atualizar() {
 }
 
 // Escuta as alterações nos controlos
-const inputs = [inputNumeros, inputSeed, sliderAltura, sliderNumCores, toggleAlternarCores, canvasBackground, ...Object.values(colorPickers)];
+const inputs = [inputNumeros, inputSeed, sliderAltura, sliderArredondamento, sliderNumCores, toggleAlternarCores, canvasBackground, ...Object.values(colorPickers)];
 inputs.forEach(el => {
     el.addEventListener('input', () => {
         if (!framePendente) {
